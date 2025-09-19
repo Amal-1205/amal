@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyPlan - Aplikasi Mahasiswa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#1E40AF',
+                        accent: '#60A5FA'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b-4 border-primary">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">📚</span>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-800">StudyPlan</h1>
+                </div>
+                <p class="text-gray-600 font-medium">Aplikasi Mahasiswa</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Navigation Tabs -->
+        <div class="bg-white rounded-xl shadow-lg mb-8 overflow-hidden">
+            <div class="flex border-b border-gray-200">
+                <button onclick="showTab('roster')" id="roster-tab" class="flex-1 py-4 px-6 text-center font-semibold text-primary border-b-2 border-primary bg-blue-50">
+                    📅 Roster Mata Kuliah
+                </button>
+                <button onclick="showTab('todo')" id="todo-tab" class="flex-1 py-4 px-6 text-center font-semibold text-gray-600 hover:text-primary hover:bg-blue-50 transition-colors">
+                    ✅ To Do List
+                </button>
+                <button onclick="showTab('summary')" id="summary-tab" class="flex-1 py-4 px-6 text-center font-semibold text-gray-600 hover:text-primary hover:bg-blue-50 transition-colors">
+                    📋 Rangkuman Tugas
+                </button>
+            </div>
+        </div>
+
+        <!-- Roster Mata Kuliah Tab -->
+        <div id="roster-content" class="tab-content">
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Tambah Mata Kuliah Baru</h2>
+                <form id="course-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <select id="course-day" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="">Pilih Hari</option>
+                        <option value="Senin">Senin</option>
+                        <option value="Selasa">Selasa</option>
+                        <option value="Rabu">Rabu</option>
+                        <option value="Kamis">Kamis</option>
+                        <option value="Jumat">Jumat</option>
+                    </select>
+                    <input type="text" id="course-name" placeholder="Nama Mata Kuliah" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <input type="text" id="course-lecturer" placeholder="Nama Dosen" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <input type="time" id="course-time" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <button type="submit" class="md:col-span-4 bg-primary hover:bg-secondary text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                        Tambah Mata Kuliah
+                    </button>
+                </form>
+            </div>
+
+            <!-- Schedule Display -->
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <div class="bg-white rounded-xl shadow-lg p-4" data-day="Senin">
+                    <h3 class="font-bold text-lg text-gray-800 mb-3 text-center bg-blue-100 py-2 rounded-lg">Senin</h3>
+                    <div id="senin-courses" class="space-y-2"></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-4" data-day="Selasa">
+                    <h3 class="font-bold text-lg text-gray-800 mb-3 text-center bg-blue-100 py-2 rounded-lg">Selasa</h3>
+                    <div id="selasa-courses" class="space-y-2"></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-4" data-day="Rabu">
+                    <h3 class="font-bold text-lg text-gray-800 mb-3 text-center bg-blue-100 py-2 rounded-lg">Rabu</h3>
+                    <div id="rabu-courses" class="space-y-2"></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-4" data-day="Kamis">
+                    <h3 class="font-bold text-lg text-gray-800 mb-3 text-center bg-blue-100 py-2 rounded-lg">Kamis</h3>
+                    <div id="kamis-courses" class="space-y-2"></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-4" data-day="Jumat">
+                    <h3 class="font-bold text-lg text-gray-800 mb-3 text-center bg-blue-100 py-2 rounded-lg">Jumat</h3>
+                    <div id="jumat-courses" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- To Do List Tab -->
+        <div id="todo-content" class="tab-content hidden">
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Tambah Tugas Baru</h2>
+                <form id="todo-form" class="flex gap-4">
+                    <input type="text" id="todo-input" placeholder="Masukkan tugas baru..." class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <button type="submit" class="bg-primary hover:bg-secondary text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                        Tambah Tugas
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Daftar Tugas</h2>
+                <div id="todo-list" class="space-y-3"></div>
+                <div id="empty-todo" class="text-center text-gray-500 py-8">
+                    Belum ada tugas. Tambahkan tugas pertama Anda!
+                </div>
+            </div>
+        </div>
+
+        <!-- Rangkuman Tugas Tab -->
+        <div id="summary-content" class="tab-content hidden">
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Tambah Tugas per Hari</h2>
+                <form id="daily-task-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <select id="task-day" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="">Pilih Hari</option>
+                        <option value="Senin">Senin</option>
+                        <option value="Selasa">Selasa</option>
+                        <option value="Rabu">Rabu</option>
+                        <option value="Kamis">Kamis</option>
+                        <option value="Jumat">Jumat</option>
+                    </select>
+                    <input type="text" id="task-input" placeholder="Deskripsi tugas..." class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <button type="submit" class="bg-primary hover:bg-secondary text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                        Tambah Tugas
+                    </button>
+                </form>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="font-bold text-lg text-gray-800 mb-3 text-center bg-green-100 py-2 rounded-lg">Senin</h3>
+                    <div id="senin-tasks" class="space-y-2"></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="font-bold text-lg text-gray-800 mb-3 text-center bg-green-100 py-2 rounded-lg">Selasa</h3>
+                    <div id="selasa-tasks" class="space-y-2"></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="font-bold text-lg text-gray-800 mb-3 text-center bg-green-100 py-2 rounded-lg">Rabu</h3>
+                    <div id="rabu-tasks" class="space-y-2"></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="font-bold text-lg text-gray-800 mb-3 text-center bg-green-100 py-2 rounded-lg">Kamis</h3>
+                    <div id="kamis-tasks" class="space-y-2"></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="font-bold text-lg text-gray-800 mb-3 text-center bg-green-100 py-2 rounded-lg">Jumat</h3>
+                    <div id="jumat-tasks" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let courses = JSON.parse(localStorage.getItem('courses')) || [];
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+        let dailyTasks = JSON.parse(localStorage.getItem('dailyTasks')) || {};
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Remove active state from all tab buttons
+            document.querySelectorAll('[id$="-tab"]').forEach(btn => {
+                btn.classList.remove('text-primary', 'border-b-2', 'border-primary', 'bg-blue-50');
+                btn.classList.add('text-gray-600');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-content').classList.remove('hidden');
+            
+            // Add active state to selected tab button
+            const activeTab = document.getElementById(tabName + '-tab');
+            activeTab.classList.add('text-primary', 'border-b-2', 'border-primary', 'bg-blue-50');
+            activeTab.classList.remove('text-gray-600');
+        }
+
+        // Course management
+        document.getElementById('course-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const day = document.getElementById('course-day').value;
+            const name = document.getElementById('course-name').value;
+            const lecturer = document.getElementById('course-lecturer').value;
+            const time = document.getElementById('course-time').value;
+            
+            if (day && name && lecturer && time) {
+                const course = {
+                    id: Date.now(),
+                    day,
+                    name,
+                    lecturer,
+                    time
+                };
+                
+                courses.push(course);
+                localStorage.setItem('courses', JSON.stringify(courses));
+                renderCourses();
+                
+                // Reset form
+                this.reset();
+            }
+        });
+
+        function renderCourses() {
+            const days = ['senin', 'selasa', 'rabu', 'kamis', 'jumat'];
+            
+            days.forEach(day => {
+                const container = document.getElementById(day + '-courses');
+                const dayCourses = courses.filter(course => course.day.toLowerCase() === day);
+                
+                container.innerHTML = dayCourses
+                    .sort((a, b) => a.time.localeCompare(b.time))
+                    .map(course => `
+                        <div class="bg-blue-50 p-3 rounded-lg border-l-4 border-primary">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-gray-800">${course.name}</h4>
+                                    <p class="text-sm text-gray-600">${course.lecturer}</p>
+                                    <p class="text-sm text-primary font-medium">${course.time}</p>
+                                </div>
+                                <button onclick="deleteCourse(${course.id})" class="text-red-500 hover:text-red-700 ml-2">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                
+                if (dayCourses.length === 0) {
+                    container.innerHTML = '<p class="text-gray-400 text-sm text-center py-4">Belum ada mata kuliah</p>';
+                }
+            });
+        }
+
+        function deleteCourse(id) {
+            courses = courses.filter(course => course.id !== id);
+            localStorage.setItem('courses', JSON.stringify(courses));
+            renderCourses();
+        }
+
+        // Todo management
+        document.getElementById('todo-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const input = document.getElementById('todo-input');
+            const text = input.value.trim();
+            
+            if (text) {
+                const todo = {
+                    id: Date.now(),
+                    text,
+                    completed: false
+                };
+                
+                todos.push(todo);
+                localStorage.setItem('todos', JSON.stringify(todos));
+                renderTodos();
+                input.value = '';
+            }
+        });
+
+        function renderTodos() {
+            const container = document.getElementById('todo-list');
+            const emptyState = document.getElementById('empty-todo');
+            
+            if (todos.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            container.innerHTML = todos.map(todo => `
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <input type="checkbox" ${todo.completed ? 'checked' : ''} 
+                           onchange="toggleTodo(${todo.id})" 
+                           class="w-5 h-5 text-primary rounded focus:ring-primary">
+                    <span class="flex-1 ${todo.completed ? 'line-through text-gray-500' : 'text-gray-800'}">${todo.text}</span>
+                    <button onclick="deleteTodo(${todo.id})" class="text-red-500 hover:text-red-700">
+                        🗑️
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function toggleTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                localStorage.setItem('todos', JSON.stringify(todos));
+                renderTodos();
+            }
+        }
+
+        function deleteTodo(id) {
+            todos = todos.filter(todo => todo.id !== id);
+            localStorage.setItem('todos', JSON.stringify(todos));
+            renderTodos();
+        }
+
+        // Daily tasks management
+        document.getElementById('daily-task-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const day = document.getElementById('task-day').value;
+            const task = document.getElementById('task-input').value.trim();
+            
+            if (day && task) {
+                if (!dailyTasks[day]) {
+                    dailyTasks[day] = [];
+                }
+                
+                dailyTasks[day].push({
+                    id: Date.now(),
+                    text: task
+                });
+                
+                localStorage.setItem('dailyTasks', JSON.stringify(dailyTasks));
+                renderDailyTasks();
+                
+                // Reset form
+                this.reset();
+            }
+        });
+
+        function renderDailyTasks() {
+            const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+            
+            days.forEach(day => {
+                const container = document.getElementById(day.toLowerCase() + '-tasks');
+                const tasks = dailyTasks[day] || [];
+                
+                container.innerHTML = tasks.map(task => `
+                    <div class="bg-green-50 p-3 rounded-lg border-l-4 border-green-500">
+                        <div class="flex justify-between items-start">
+                            <p class="text-gray-800 flex-1">${task.text}</p>
+                            <button onclick="deleteDailyTask('${day}', ${task.id})" class="text-red-500 hover:text-red-700 ml-2">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                if (tasks.length === 0) {
+                    container.innerHTML = '<p class="text-gray-400 text-sm text-center py-4">Belum ada tugas</p>';
+                }
+            });
+        }
+
+        function deleteDailyTask(day, taskId) {
+            if (dailyTasks[day]) {
+                dailyTasks[day] = dailyTasks[day].filter(task => task.id !== taskId);
+                localStorage.setItem('dailyTasks', JSON.stringify(dailyTasks));
+                renderDailyTasks();
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCourses();
+            renderTodos();
+            renderDailyTasks();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9815d5536049fd41',t:'MTc1ODI1MDgzMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
